@@ -32,7 +32,7 @@ describe("Login check with various credential", () => {
   });
 
   // login with invalid credential
-  it.only("login with invalid credential", async () => {
+  it("login with invalid credential", async () => {
     await browser.url("https://saucedemo.com/v1");
 
     await $("#user-name").setValue("standard_user");
@@ -50,5 +50,28 @@ describe("Login check with various credential", () => {
     expect(err_msg).toHaveText(
       "Username and password do not match any user in this service"
     );
+  });
+
+  // login with problem user
+  it.only("login with problem user", async () => {
+    await browser.url("https://saucedemo.com/v1");
+
+    await $("#user-name").setValue("problem_user");
+
+    await $("#password").setValue("secret_sauce");
+
+    const login_btn = await $("#login-button");
+
+    await login_btn.click();
+
+    await browser.pause(3000);
+
+    const img_product = await $(".inventory_item_img");
+
+    const isImgLoaded = await browser.executeScript((element) => {
+      return element.complete && element.naturalHeight > 0;
+    }, img_product);
+
+    expect(isImgLoaded).toBe(true, "Image should be loaded");
   });
 });
